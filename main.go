@@ -63,9 +63,7 @@ func (i *Inventory) AddGroupFiled(groupName string, filed string, names ...strin
 	} else {
 		group = i.Data[groupName].(interface{}).(map[string][]string)
 	}
-	for _, name := range names {
-		group[filed] = append(group[filed], name)
-	}
+	group[filed] = append(group[filed], names...)
 	i.Data[groupName] = group
 }
 
@@ -125,12 +123,12 @@ func parserHost(host Host) (map[string]string, []string) {
 		vars[AnsibleVarUser] = v
 	}
 
-	var groupNames []string
+	var groupNames = make([]string, 0, 1+len(host.Labels))
 	switch host.Kind {
 	case "node":
-		groupNames = append(groupNames, GroupNodes)
+		groupNames = []string{GroupNodes}
 	case "vm":
-		groupNames = append(groupNames, GroupVirtualMachines)
+		groupNames = []string{GroupVirtualMachines}
 	}
 	for key, value := range host.Labels {
 		if !autoGroupLabel(key) {
@@ -162,8 +160,8 @@ func getAllVMs(harvClientSet *harvclient.Clientset) []Host {
 	}
 
 	var (
-		ip  string
-		kind = "vm"
+		ip     string
+		kind   = "vm"
 		result = make([]Host, 0, len(vmiList.Items))
 	)
 
@@ -193,7 +191,7 @@ func getAllNode(kubeClientSet *clientset.Clientset) []Host {
 	}
 
 	var (
-		kind = "node"
+		kind   = "node"
 		result = make([]Host, 0, len(nodes.Items))
 	)
 
