@@ -1,0 +1,37 @@
+run:
+  skip-files:
+    - '.*_test.go'
+linters:
+  enable:
+    - vet
+    - staticcheck
+    - bodyclose
+    - errcheck
+    - gofmt
+    - goimports
+    - whitespace
+    - deadcode
+    - unused
+    - unparam
+    - ineffassign
+    - scopelint
+    - maligned
+    - prealloc
+    - stylecheck
+    - golint
+#    - funlen
+#    - lll
+    - goconst
+      # - gomnd
+    - gosimple
+    - misspell
+    - gosec
+  disable:
+
+
+  enable-all: false
+  disable-all: true
+  fast: false
+linters-settings:
+  maligned:
+    suggest-new: true

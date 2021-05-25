@@ -1,0 +1,9 @@
+#!/bin/bash
+set -e
+
+source $(dirname $0)/version
+
+cd $(dirname $0)/..
+
+mkdir -p dist/artifacts
+tar -zcvf dist/artifacts/harvester-inventory${SUFFIX}.tar.gz -C bin harvester-inventory
