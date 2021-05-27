@@ -29,9 +29,10 @@ const (
 	GroupNodes           = "nodes"
 	GroupVirtualMachines = "vms"
 
-	HarvesterSSHUserLabel = "harvesterhci.io/ssh-user"
+	KindNode           = "node"
+	KindVirtualMachine = "vm"
 
-	defaultSSHUser = "rancher"
+	HarvesterSSHUserLabel = "tag.harvesterhci.io/ssh-user"
 )
 
 type Host struct {
@@ -116,7 +117,6 @@ func autoGroupLabel(labelName string) bool {
 func parserHost(host Host) (map[string]string, []string) {
 	vars := map[string]string{
 		AnsibleVarHost: host.IP,
-		AnsibleVarUser: defaultSSHUser,
 	}
 
 	if v, ok := host.Annotations[HarvesterSSHUserLabel]; ok {
@@ -125,9 +125,9 @@ func parserHost(host Host) (map[string]string, []string) {
 
 	var groupNames = make([]string, 0, 1+len(host.Labels))
 	switch host.Kind {
-	case "node":
+	case KindNode:
 		groupNames = []string{GroupNodes}
-	case "vm":
+	case KindVirtualMachine:
 		groupNames = []string{GroupVirtualMachines}
 	}
 	for key, value := range host.Labels {
@@ -161,7 +161,7 @@ func getAllVMs(harvClientSet *harvclient.Clientset) []Host {
 
 	var (
 		ip     string
-		kind   = "vm"
+		kind   = KindVirtualMachine
 		result = make([]Host, 0, len(vmiList.Items))
 	)
 
@@ -191,7 +191,7 @@ func getAllNode(kubeClientSet *clientset.Clientset) []Host {
 	}
 
 	var (
-		kind   = "node"
+		kind   = KindNode
 		result = make([]Host, 0, len(nodes.Items))
 	)
 
