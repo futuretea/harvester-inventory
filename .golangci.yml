@@ -1,6 +1,5 @@
 run:
-  skip-files:
-    - '.*_test.go'
+  deadline: 5m
 linters:
   enable:
     - vet
@@ -18,20 +17,13 @@ linters:
     - maligned
     - prealloc
     - stylecheck
-    - golint
-#    - funlen
-#    - lll
     - goconst
-      # - gomnd
     - gosimple
     - misspell
     - gosec
-  disable:
-
-
   enable-all: false
   disable-all: true
   fast: false
 linters-settings:
-  maligned:
-    suggest-new: true
+  goimports:
+    local-prefixes: github.com/futuretea/harvester-inventory
