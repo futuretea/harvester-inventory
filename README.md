@@ -14,11 +14,16 @@ ansible -m ping -i ./harvester-inventory all
 ansible -m ping -i ./harvester-inventory nodes
 ```
 
-### virtualmachines
+### virtualmachines in default namespace
 ```bash
 ansible -m ping -i ./harvester-inventory vms
 ```
 
+
+### virtualmachines in other namespace
+```bash
+NAMESPACE=other ansible -m ping -i ./harvester-inventory vms
+```
 
 ### master node
 ```bash

@@ -4,10 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
 	"strings"
 
 	harvclient "github.com/harvester/harvester/pkg/generated/clientset/versioned"
 	"github.com/rancher/wrangler/pkg/kubeconfig"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	clientset "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
@@ -33,6 +35,8 @@ const (
 	KindVirtualMachine = "vm"
 
 	HarvesterSSHUserLabel = "tag.harvesterhci.io/ssh-user"
+	DefaultNamespace      = "default"
+	EnvNamespaceKey       = "NAMESPACE"
 )
 
 type Host struct {
@@ -103,15 +107,20 @@ func NewInventory() *Inventory {
 }
 
 func generateGroupName(kind, prefix, key, value string) string {
-	groupName := kind + "_" + prefix + "_" + key + "_" + value
-	groupName = strings.ReplaceAll(groupName, ".", "_")
-	groupName = strings.ReplaceAll(groupName, "-", "_")
-	groupName = strings.ReplaceAll(groupName, "/", "_")
+	groupName := strings.Join([]string{kind, prefix, key, value}, "_")
+	for _, replace := range []string{".", "-", "/"} {
+		groupName = strings.ReplaceAll(groupName, replace, "_")
+	}
 	return groupName
 }
 
 func autoGroupLabel(labelName string) bool {
-	return strings.Contains(labelName, "kubernetes") || strings.Contains(labelName, "k3s") || strings.Contains(labelName, "harvester")
+	for _, match := range []string{"kubernetes", "k3s", "harvester"} {
+		if strings.Contains(labelName, match) {
+			return true
+		}
+	}
+	return false
 }
 
 func parserHost(host Host) (map[string]string, []string) {
@@ -153,10 +162,22 @@ func buildInventory(hosts []Host) string {
 	return inventory.String()
 }
 
+func getVMNamespace() string {
+	namespace := os.Getenv(EnvNamespaceKey)
+	if namespace == "" {
+		namespace = DefaultNamespace
+	}
+	return namespace
+}
+
 func getAllVMs(harvClientSet *harvclient.Clientset) []Host {
-	vmiList, err := harvClientSet.KubevirtV1().VirtualMachineInstances("default").List(context.Background(), metav1.ListOptions{})
+	vmiList, err := harvClientSet.KubevirtV1().VirtualMachineInstances(getVMNamespace()).List(context.Background(), metav1.ListOptions{})
 	if err != nil {
-		klog.Fatalln(err)
+		if !apierrors.IsNotFound(err) {
+			klog.Fatalln(err)
+		} else {
+			return []Host{}
+		}
 	}
 
 	var (
