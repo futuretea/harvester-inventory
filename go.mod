@@ -52,7 +52,7 @@ replace (
 
 require (
 	github.com/harvester/harvester v1.0.2
-	github.com/rancher/wrangler v0.8.11-0.20211214201934-f5aa5d9f2e81
+	github.com/rancher/wrangler v0.8.11
 	k8s.io/apimachinery v0.22.3
 	k8s.io/client-go v12.0.0+incompatible
 	k8s.io/klog v1.0.0
