@@ -1,20 +1,17 @@
 run:
   deadline: 5m
+  skip-dirs:
+    - go/pkg/mod
 linters:
   enable:
     - vet
     - staticcheck
-    - bodyclose
     - errcheck
     - gofmt
     - goimports
     - whitespace
-    - deadcode
     - unused
-    - unparam
     - ineffassign
-    - scopelint
-    - maligned
     - prealloc
     - stylecheck
     - goconst

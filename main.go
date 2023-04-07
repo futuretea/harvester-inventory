@@ -66,14 +66,14 @@ func (i *Inventory) AddGroupFiled(groupName string, filed string, names ...strin
 			filed: {},
 		}
 	} else {
-		group = i.Data[groupName].(interface{}).(map[string][]string)
+		group = i.Data[groupName].(map[string][]string)
 	}
 	group[filed] = append(group[filed], names...)
 	i.Data[groupName] = group
 }
 
 func (i *Inventory) AddMetaHost(hostName string, hostVars ...map[string]string) {
-	host := i.Data[FieldMeta].(interface{}).(map[string]map[string]map[string]string)[FieldHostVars][hostName]
+	host := i.Data[FieldMeta].(map[string]map[string]map[string]string)[FieldHostVars][hostName]
 	if host == nil {
 		host = make(map[string]string)
 	}

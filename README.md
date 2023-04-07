@@ -1,6 +1,12 @@
 # harvester-inventory
 the  ansible dynamic inventory to pull hosts(nodes and virtualmachines) from Harvester.
 
+## Build
+```bash
+make
+mv ./bin/harvester-inventory ./harvester-inventory
+```
+
 ## Example
 
 ### all (nodes+virtualmachines)
